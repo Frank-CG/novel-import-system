@@ -5,6 +5,7 @@ $(document).ready(function() {
     $("form#data").submit(function(e) {
         e.preventDefault();
         var formData = new FormData();
+        formData.append('mode', $('#mode').val());
         formData.append('file', this[0].files[0]);
 
         $.ajax({

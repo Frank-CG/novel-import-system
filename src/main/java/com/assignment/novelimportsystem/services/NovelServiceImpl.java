@@ -7,6 +7,7 @@ import com.assignment.novelimportsystem.repositories.WriterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -64,7 +65,19 @@ public class NovelServiceImpl implements NovelService {
     }
 
     @Override
+    public Iterable<NovelInfo> saveAll(List<NovelInfo> novelInfos) {
+        return novelRepository.saveAll(novelInfos);
+    }
+
+
+    @Override
     public void delete(Long id) {
         novelRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    public void truncate() {
+        novelRepository.truncate();
     }
 }

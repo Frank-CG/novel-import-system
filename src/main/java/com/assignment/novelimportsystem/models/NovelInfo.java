@@ -24,7 +24,7 @@ public class NovelInfo {
     private final String novelDesc;
     
     public NovelInfo(){
-        id = -1L;
+        id = null;
         writerId = -1L;
         novelName = "";
         novelType = "";
@@ -48,7 +48,10 @@ public class NovelInfo {
 
     public static NovelInfo parse(String record){
         String[] arr = record.split(",");
-        return new NovelInfo(-1L,Long.parseLong(arr[0]),arr[1],arr[2],arr[3],arr[4]);
+        if(arr[0].equals("")){
+            return new NovelInfo(null,Long.parseLong(arr[1]),arr[2],arr[3],arr[4],arr[5]);
+        }
+        return new NovelInfo(Long.parseLong(arr[0]),Long.parseLong(arr[1]),arr[2],arr[3],arr[4],arr[5]);
     }
 
     public Long getId() {

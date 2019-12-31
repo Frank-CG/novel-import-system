@@ -11,5 +11,7 @@ public interface NovelService{
     NovelInfo getNovelInfoById(Long novelId);
     boolean checkData(NovelInfo novelInfo);
     NovelInfo saveOrUpdate(NovelInfo novelInfo);
+    Iterable<NovelInfo> saveAll(List<NovelInfo> novelInfos);
     void delete(Long id);
+    void truncate();
 }

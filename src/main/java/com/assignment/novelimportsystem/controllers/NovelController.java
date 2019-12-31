@@ -55,15 +55,16 @@ public class NovelController {
         return response;
     }
 
-    private boolean processSingleLine(String line){
+    private boolean processSingleLine(String line, List<NovelInfo> novels){
         System.out.println(line);
-        if(line.split(",").length != 5){
+        if(line.split(",").length != 6){
             return false;
         }
         NovelInfo novelInfo = NovelInfo.parse(line);
         boolean flag = novelService.checkData(novelInfo);
         if(flag){
-            novelService.saveOrUpdate(novelInfo);
+//            novelService.saveOrUpdate(novelInfo);
+            novels.add(novelInfo);
         }else{
             return false;
         }
@@ -71,19 +72,24 @@ public class NovelController {
     }
 
     @PostMapping("/fileImport")
-    public Response fileImport(@RequestParam MultipartFile file) {
+    public Response fileImport(@RequestParam("mode") String mode, MultipartFile file) {
+        System.out.println(mode);
         Response response = null;
         HashMap<String,Object> metadata = new HashMap<>();
         ArrayList<FailedRecord> failedRecords = new ArrayList<>();
         int count = 0;
         int failedCount = 0;
         try{
+            if(mode.equals("truncate")){
+                novelService.truncate();
+            }
             BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()));
             String line = reader.readLine();
+            List<NovelInfo> novelInfoList = new ArrayList<>();
             while (line != null) {
                 count++;
                 System.out.println("Line:"+line);
-                boolean flag = processSingleLine(line);
+                boolean flag = processSingleLine(line,novelInfoList);
                 if (!flag){
                     failedCount++;
                     failedRecords.add(new FailedRecord(count,line));
@@ -93,6 +99,10 @@ public class NovelController {
                 line = reader.readLine();
             }
             reader.close();
+
+            if(novelInfoList.size() > 0){
+                novelService.saveAll(novelInfoList);
+            }
         } catch (IOException ex){
             ex.printStackTrace();;
         }
